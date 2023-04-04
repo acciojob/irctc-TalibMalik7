@@ -126,42 +126,32 @@ public class TrainService {
         //You can assume that the date change doesn't need to be done ie the travel will certainly happen with the same date (More details
         //in problem statement)
         //You can also assume the seconds and milli seconds value will be 0 in a LocalTime format.
-//        String stationn = station.toString();
-//        List<Integer> trainIds = new ArrayList<>();
-//        int startMin = startTime.getHour()*60 + startTime.getMinute();
-//        int endMin = endTime.getHour()*60 + endTime.getMinute();
-//        List<Train> trains = trainRepository.findAll();
-//        for(Train train : trains){
-//            int departure = train.getDepartureTime().getHour()*60 + train.getDepartureTime().getMinute();
-//            String route = train.getRoute();
-//            int stationIndex = route.indexOf(stationn);
-//            if(stationIndex == -1) continue;
-//            int arrival = departure + (60* stationIndex);
-//            if(arrival >= startMin && arrival <= endMin){
-//                trainIds.add(train.getTrainId());
-//            }
-//        }
-//        return trainIds;
-        List<Integer> TrainList = new ArrayList<>();
+        String stationn = station.toString();
+        List<Integer> trainIds = new ArrayList<>();
+        int startMin = (startTime.getHour()*60) + startTime.getMinute();
+        int endMin = (endTime.getHour()*60) + endTime.getMinute();
         List<Train> trains = trainRepository.findAll();
-        for(Train t:trains){
-            String s = t.getRoute();
-            String[] ans = s.split(",");
-            for(int i=0;i<ans.length;i++){
-                if(Objects.equals(ans[i], String.valueOf(station))){
-                    int startTimeInMin = (startTime.getHour() * 60) + startTime.getMinute();
-                    int lastTimeInMin = (endTime.getHour() * 60) + endTime.getMinute();
-
-
-                    int departureTimeInMin = (t.getDepartureTime().getHour() * 60) + t.getDepartureTime().getMinute();
-                    int reachingTimeInMin  = departureTimeInMin + (i * 60);
-                    if(reachingTimeInMin>=startTimeInMin && reachingTimeInMin<=lastTimeInMin)
-                        TrainList.add(t.getTrainId());
+        for(Train train : trains){
+            int departureMin = (train.getDepartureTime().getHour()*60) + train.getDepartureTime().getMinute();
+           // String route = train.getRoute();    // string route will not work kuki ek station m more than 1 letter hai or unko 1 he ginna hai
+             String [] route = train.getRoute().split(","); // this will work ab index sahi s count hoga hr station k liye
+            int stationIndex = -1;
+            for(int i = 0; i<route.length ;i++) {
+                if (stationn.equals(route[i].toString())) {
+                    stationIndex = i;
+                    break;
                 }
             }
+                if (stationIndex == -1) continue;
+                int arrivalMin = departureMin + (stationIndex * 60);
+                if (arrivalMin >= startMin && arrivalMin <= endMin) {
+                    trainIds.add(train.getTrainId());
+                }
+
         }
-        return TrainList;
-    }
+        return trainIds;
+
+      }
 
 }
 

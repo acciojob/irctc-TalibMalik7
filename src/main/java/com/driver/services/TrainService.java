@@ -46,12 +46,26 @@ public class TrainService {
         //Suppose the route is A B C D
         //And there are 2 seats avaialble in total in the train
         //and 2 tickets are booked from A to C and B to D.
-        //The seat is available only between A to C and A to B. If a seat is empty between 2 station it will be counted to our final ans
+        //The seat is available only between A to B and C to D. If a seat is empty between 2 station it will be counted to our final ans
         //even if that seat is booked post the destStation or before the boardingStation
         //Inshort : a train has totalNo of seats and there are tickets from and to different locations
         //We need to find out the available seats between the given 2 stations.
-
-       return null;
+        Train train = trainRepository.findById(seatAvailabilityEntryDto.getTrainId()).get();
+        String fromStation = seatAvailabilityEntryDto.getFromStation().toString();
+        String toStation = seatAvailabilityEntryDto.getToStation().toString();
+        Integer booked = 0;
+        int total_seats = train.getNoOfSeats();
+        String route = train.getRoute();
+        Integer fromStationIndex = route.indexOf(fromStation);
+        Integer toStationIndex = route.indexOf(toStation);
+        for(Ticket t : train.getBookedTickets()){
+            Integer boookedfromindex  = route.indexOf(t.getFromStation().toString());
+            Integer bookedtoIndex = route.indexOf(t.getToStation().toString());
+            if(bookedtoIndex <= fromStationIndex && bookedtoIndex >= toStationIndex){
+                booked += t.getPassengersList().size();
+            }
+        }
+       return total_seats - booked;
     }
 
     public Integer calculatePeopleBoardingAtAStation(Integer trainId,Station station) throws Exception{

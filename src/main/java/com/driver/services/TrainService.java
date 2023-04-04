@@ -62,7 +62,8 @@ public class TrainService {
             Integer boookedfromIndex  = route.indexOf(t.getFromStation().toString());
             Integer bookedtoIndex = route.indexOf(t.getToStation().toString());
             if(boookedfromIndex <= fromStationIndex && bookedtoIndex >= toStationIndex
-               ){
+               || boookedfromIndex >= fromStationIndex && boookedfromIndex < toStationIndex
+               || bookedtoIndex > fromStationIndex && bookedtoIndex <= toStationIndex){
                 booked += t.getPassengersList().size();
             }
         }
